@@ -7,7 +7,7 @@ DB = Sequel.connect('postgres://stuart@localhost/uadt_test?search_path=1')
 
 class App < Roda
   use Rack::Session::Cookie, :secret => (ENV['SECRET'] || 'supersecret')
-  use Rack::Protection
+  # use Rack::Protection
 
   route do |r|
     # GET / request
@@ -16,6 +16,15 @@ class App < Roda
     end
 
     r.on "mappings" do
+
+      response[ 'Access-Control-Allow-Origin' ] = "*"
+      response[ 'Access-Control-Allow-Methods' ] = "GET, POST, OPTIONS"
+      response[ 'Access-Control-Allow-Headers' ] = "Accept, Content-Type, Access-Control-Allow-Origin, Authorization, X-Requested-With"
+
+      r.on method: :options do
+        response.status = 200
+      end
+
       r.get do
         response['Content-Type'] = 'application/json'
         {'a'=>'b'}.to_json

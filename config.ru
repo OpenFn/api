@@ -4,6 +4,7 @@ require 'bundler'
 
 Bundler.require
 
-require "./hello_world"
+require "./lib/environment"
+require "app"
 
 run App.freeze.app
