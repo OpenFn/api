@@ -10,4 +10,5 @@ group :development, :test do
   gem "pry-byebug"
   gem "rspec"
   gem "rack-test"
+  gem "shotgun"
 end
