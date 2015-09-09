@@ -85,13 +85,46 @@ describe App do
       end
 
       context '/transform' do
-        context 'GET' do
-          it "returns the mappings current transform"
-          it "returns 404 when the mapping doesn't have a transform"
+        before :each do
+          expect(Mappings).to receive(:find).
+            with("10").and_return({id: 10})
         end
 
+        context 'GET' do
+          it "returns the mappings current transform" do
+            expect(Transforms).to receive(:latest_for_mapping).with(10).
+              and_return({})
+
+            get '/mappings/10/transform'
+            expect(last_response.content_type).to eql "application/json"
+            expect(last_response.status).to eql 200
+
+          end
+
+          it "returns 404 when the mapping doesn't have a transform" do
+            expect(Transforms).to receive(:latest_for_mapping).with(10).
+              and_return(nil)
+
+            get '/mappings/10/transform'
+            expect(last_response.content_type).to eql "application/json"
+            expect(last_response.status).to eql 404
+
+          end
+        end
+
+        let(:transform) { { "spec" => {}.to_json, "mapping" => 10 } }
         context 'POST' do
-          it "creates a transform assigned to the mapping"
+          it "creates a transform assigned to the mapping" do
+            expect(Transforms).to receive(:insert).with(transform).
+              and_return(21)
+
+            post '/mappings/10/transform', transform.to_json
+
+            expect(last_response.content_type).to eql "application/json"
+            expect(last_response.status).to eql 201
+            expect(last_response.location).to eql "http://example.org/transforms/21"
+
+          end
         end
 
         context 'PUT' do

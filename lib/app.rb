@@ -57,6 +57,28 @@ class App < Roda
             end
           end
 
+          # /mappings/:id/transform
+          r.on "transform" do
+            r.get do
+              transform = Transforms.latest_for_mapping(10)
+
+              r.on !!transform do
+                transform.to_json
+              end
+            end
+
+            r.post do
+              transform = JSON.parse(request.body.read)
+              transform.merge!({"mapping" => @mapping[:id]})
+              id = Transforms.insert(transform)
+
+              response[ 'Access-Control-Expose-Headers' ] = 'Location'
+              response[ 'Location' ] = (Pathname.new(request.base_url) + "transforms/#{id}").to_s
+
+              response.status = 201
+            end
+          end
+
           # /mappings/:id
           r.get do
             @mapping.to_json

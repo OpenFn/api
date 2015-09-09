@@ -1,17 +1,11 @@
-class Transforms
+class Transforms < Sequel::Model(:transforms)
 
-  class << self
-    def find(id)
-      DB.from(:transforms).where(id: id).first
+  dataset_module do
+
+    def latest_for_mapping(mapping_id)
+      where(mapping: mapping_id).order(:modified,:created_at).first
     end
 
-    def all
-      DB.from(:transforms).all
-    end
-
-    def insert(transform)
-      DB.from(:transforms).insert(submission)
-    end
   end
 
 end
