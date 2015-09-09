@@ -5,43 +5,9 @@ require "sequel"
 
 DB = Sequel.connect('postgres://stuart@localhost/uadt_test?search_path=1')
 
-class Mappings
-
-
-  class << self
-    def find(id)
-      DB.from(:mappings).where(id: id).first
-    end
-
-    def all
-      DB.from(:mappings).all
-    end
-
-    def insert(mapping)
-      DB.from(:mappings).insert(mapping)
-    end
-  end
-
-end
-
-class Submissions
-
-
-  class << self
-    def find(id)
-      DB.from(:submissions).where(id: id).first
-    end
-
-    def all
-      DB.from(:submissions).all
-    end
-
-    def insert(submission)
-      DB.from(:submissions).insert(submission)
-    end
-  end
-
-end
+require "repositories/mappings"
+require "repositories/submissions"
+require "repositories/transforms"
 
 class App < Roda
   use Rack::Session::Cookie, :secret => (ENV['SECRET'] || 'supersecret')
